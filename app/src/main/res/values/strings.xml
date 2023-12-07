@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">PowerTrack</string>
+    <string name="exercise_list">Exercise List</string>
+    <string name="nav_drawer_menu" />
+    <string name="welcome">Hello this is the Home page</string>
+    <string name="home_picture_image">DUPA</string>
+    <string name="exercise_list_1">List of all exercises</string>
+
+
+    <string-array name="exercise_array">
+        <item>Any gender</item>
+        <item>Female</item>
+        <item>Male</item>
+    </string-array>
+
+
+
+</resources>
