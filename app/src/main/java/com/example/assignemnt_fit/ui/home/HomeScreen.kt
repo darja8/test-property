@@ -22,10 +22,6 @@ import com.example.assignemnt_fit.ui.components.TopLevelScaffold
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.getValue
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.assignemnt_fit.ui.navigation.Screen.*
 import com.example.assignemnt_fit.ui.navigation.screens
 
 @Composable
@@ -76,10 +72,9 @@ fun ExerciseScreen(
     }
 }
 
-
 @Preview
 @Composable
-private fun CatsScreenPreview() {
+private fun ExerciseScreenPreview() {
     val navController = rememberNavController()
     Assignemnt_fitTheme(dynamicColor = false) {
         ExerciseScreen(navController)
