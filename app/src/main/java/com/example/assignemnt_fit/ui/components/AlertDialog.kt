@@ -1,63 +1,63 @@
 package com.example.assignemnt_fit.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.R
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.example.assignemnt_fit.ui.theme.Assignemnt_fitTheme
 
 @Composable
 fun AlertDialog(
-    onDismissRequest: () -> Unit,
-    onConfirmation: () -> Unit,
-    dialogTitle: String,
-    dialogText: String,
+    dialogIsOpen: Boolean,
+    dialogOpen: (Boolean) -> Unit = {},
 ) {
-    AlertDialog(
-        title = {
-            Text(text = dialogTitle)
-        },
-        text = {
-            Text(text = dialogText)
-        },
-        onDismissRequest = {
-            onDismissRequest()
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onConfirmation()
+    if(dialogIsOpen){
+        AlertDialog(
+            title = {
+                //text to be changed
+                Text(text = stringResource(id = R.string.dialog))
+            },
+            text = {
+                //text to be changed
+                Text(text = stringResource(id = R.string.dialog))
+            },
+            onDismissRequest = {
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                    }
+                ) {
+                    Text("Remove")
                 }
-            ) {
-                Text("Remove")
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        dialogOpen(false)
+                    }
+                ) {
+                    Text("Cancel")
                 }
-            ) {
-                Text("Cancel")
             }
-        }
-    )
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun AlertDialogPreview() {
-    val navController = rememberNavController()
     Assignemnt_fitTheme {
-        com.example.assignemnt_fit.ui.components.AlertDialog(
-            onDismissRequest = { /*TODO*/ },
-            onConfirmation = { /*TODO*/ },
-            dialogTitle = "Test",
-            dialogText = "Test"
+        AlertDialog(
+            dialogIsOpen = true,
         )
     }
 }

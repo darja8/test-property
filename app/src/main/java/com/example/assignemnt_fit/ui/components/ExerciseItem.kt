@@ -18,7 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -43,9 +43,8 @@ fun ExerciseItem(
     onClick: () -> Unit = {}
 )
 {
-    val openAlertDialog = remember { mutableStateOf(false) }
+    var dialogIsOpen by rememberSaveable { mutableStateOf(false) }
 
-    // Row to display an exercise's information
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -88,12 +87,18 @@ fun ExerciseItem(
                 )
             }
             IconButton(
-                onClick = { onClick },
+                onClick = { dialogIsOpen = true},
                 modifier = Modifier.padding(0.dp),
             ) {
                 Icon(
                     imageVector = Icons.Filled.Delete,
                     contentDescription = stringResource(id = R.string.exercise_list)
+                )
+                AlertDialog(
+                    dialogIsOpen = dialogIsOpen,
+                    dialogOpen = { isOpen ->
+                        dialogIsOpen = isOpen
+                    },
                 )
             }
         }

@@ -1,4 +1,4 @@
-package com.example.assignemnt_fit.ui.exercises
+package com.example.assignemnt_fit.ui.day
 
 import androidx.compose.foundation.background
 import com.example.assignemnt_fit.R.*
@@ -28,6 +28,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.assignemnt_fit.R
 import com.example.assignemnt_fit.model.Exercise
+import com.example.assignemnt_fit.model.days
 import com.example.assignemnt_fit.model.exercises
 import com.example.assignemnt_fit.ui.components.AlertDialog
 import com.example.assignemnt_fit.ui.components.SubpageScaffold
@@ -36,42 +37,11 @@ import com.example.assignemnt_fit.ui.navigation.Screen.*
 import com.example.assignemnt_fit.ui.components.ExerciseItem
 
 @Composable
-fun ExerciseListScreen(
+fun DayScreen(
     navController: NavHostController
 ) {
-
-    SubpageScaffold(
-        navController = navController,
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {},
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = stringResource(R.string.exercise_list))
-            }
-        }
-    )
-    { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-        ) {
-            // Display the list of exercises using LazyColumn
-            LazyColumn {
-                items(exercises) { exercise ->
-
-                    ExerciseItem(exercise = exercise)
-                    Divider(
-                        modifier = Modifier
-                            .height(1.dp)
-                            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
-                    )
-                }
-            }
-        }
-    }
+    //create scaffold for subpage
+    //and content
 }
 
 
@@ -80,6 +50,6 @@ fun ExerciseListScreen(
 fun ExerciseListScreen() {
     val navController = rememberNavController()
     Assignemnt_fitTheme(dynamicColor = false) {
-        ExerciseListScreen(navController)
+        DayScreen(navController)
     }
 }
