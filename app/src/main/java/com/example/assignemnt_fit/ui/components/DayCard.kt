@@ -22,8 +22,6 @@ import com.example.assignemnt_fit.ui.theme.Assignemnt_fitTheme
 fun DayCard(
     modifier: Modifier = Modifier,
     day: WeekDay,
-    selectAction: (WeekDay) -> Unit = {},
-    deleteAction: (WeekDay) -> Unit = {}
 ){
     Card(
         modifier = modifier

@@ -5,4 +5,6 @@ data class WeekDay(
     val title: String,
     val exercises: List<Exercise> = listOf(),
     val workoutLength: Int = 10,
-    val resourceId: Int){}
+    val resourceId: Int,
+    val dayId: Int)
+

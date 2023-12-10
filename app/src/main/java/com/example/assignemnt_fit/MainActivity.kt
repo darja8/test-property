@@ -10,9 +10,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.assignemnt_fit.model.WeekDay
+import com.example.assignemnt_fit.model.days
+import com.example.assignemnt_fit.ui.day.DayScreen
 import com.example.assignemnt_fit.ui.exercises.ExerciseListScreen
 import com.example.assignemnt_fit.ui.navigation.Screen
 
@@ -22,6 +27,7 @@ import com.example.assignemnt_fit.ui.theme.Assignemnt_fitTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             Assignemnt_fitTheme {
                 // A surface container using the 'background' color from the theme
@@ -44,9 +50,26 @@ private fun BuildNavigationGraph() {
         startDestination = Screen.Home.route
     ) {
         composable(Screen.Home.route) { ExerciseScreen(navController) }
-        composable(Screen.Exercises.route) { ExerciseListScreen(navController)}
+        composable(Screen.Exercises.route) { ExerciseListScreen(navController) }
+        composable(
+            route = "${Screen.Day.route}/{dayId}",
+            arguments = listOf(navArgument("dayId") {
+                type = NavType.IntType
+            })
+        ) { navBackStackEntry ->
+            DayScreen(navBackStackEntry.arguments!!.getInt("dayId"), navController)
+        }
     }
 }
+//
+//var day: WeekDay = TODO()
+//fun SetDay(chosenDay: WeekDay){
+//    day = chosenDay
+//}
+//
+//fun GetDay(): WeekDay {
+//    return day
+//}
 
 @Preview(showBackground = true)
 @Composable

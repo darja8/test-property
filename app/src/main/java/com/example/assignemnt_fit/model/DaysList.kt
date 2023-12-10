@@ -25,7 +25,8 @@ val days = listOf(
             10,
             10,
             0,
-            false)),10,R.drawable.workout),
+            false,)),10,R.drawable.workout,
+        1),
     WeekDay("Tuesday","Upper Body", listOf(
         Exercise("Leg Curl",
             5,
@@ -39,7 +40,7 @@ val days = listOf(
             10,
             0,
             false)
-    ),10,R.drawable.workout),
+    ),10,R.drawable.workout, 2),
     WeekDay("Wednesday", "ABS",listOf(
         Exercise(
             "PushUp",
@@ -61,7 +62,7 @@ val days = listOf(
             10,
             10,
             0,
-            false)),10,R.drawable.workout),
+            false)),10,R.drawable.workout,3),
     WeekDay("Thursday", "Arms",listOf(
         Exercise(
             "PushUp",
@@ -83,7 +84,7 @@ val days = listOf(
             10,
             10,
             0,
-            false)),20,R.drawable.workout),
+            false)),20,R.drawable.workout,4),
     WeekDay("Friday","Cardio", listOf(
         Exercise(
             "Leg Curl",
@@ -91,7 +92,7 @@ val days = listOf(
             10,
             10,
             0,
-        false)),10,R.drawable.workout),
+        false)),10,R.drawable.workout,5),
     WeekDay("Saturday","Legs", listOf(
         Exercise(
             "Squat",
@@ -99,7 +100,7 @@ val days = listOf(
             10,
             10,
             0,
-        false)),10,R.drawable.workout),
+        false)),10,R.drawable.workout,6),
     WeekDay("Sunday", "Upper body", listOf(
         Exercise(
             "PullUp",
@@ -107,5 +108,5 @@ val days = listOf(
             10,
             10,
             0,
-        false)),10,R.drawable.workout),
+        false)),10,R.drawable.workout,7),
 )

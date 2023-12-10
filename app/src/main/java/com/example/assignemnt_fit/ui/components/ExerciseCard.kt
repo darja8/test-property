@@ -56,6 +56,6 @@ fun ExerciseCard() {
 private fun CatCardPreview(){
     Assignemnt_fitTheme(darkTheme = true,
         dynamicColor = false) {
-        DayCard(day = days[0])
+        // DayCard(day = days[0])
     }
 }
