@@ -1,5 +1,6 @@
 package com.example.assignemnt_fit.ui.components
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Icon
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.rememberNavController
@@ -18,17 +19,19 @@ import androidx.navigation.NavController
 
 @Composable
 fun SubpageTopAppBar(
-    navController: NavController
+    navController: NavController,
 ){
-
     TopAppBar(
         title = {
-            Text(stringResource(id = R.string.exercise_list))
+            Column {
+                Text("Exercises")
+            }
+
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
             titleContentColor = MaterialTheme.colorScheme.onPrimary,
-            navigationIconContentColor =MaterialTheme.colorScheme.onPrimary
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
         ),
         navigationIcon = {
             IconButton(onClick = {
@@ -50,7 +53,7 @@ fun SubpageTopAppBar(
 private fun MainPageTopAppBarPreview() {
     Assignemnt_fitTheme(dynamicColor = false) {
         SubpageTopAppBar(
-            navController = rememberNavController()
+            navController = rememberNavController(),
         )
     }
 }

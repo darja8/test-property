@@ -33,20 +33,7 @@ fun ExerciseCard() {
             .padding(16.dp)
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // Icon representing a person
-//        Icon(
-//            imageVector = Icons.Default.Person,
-//            contentDescription = null,
-//            modifier = Modifier
-//                .size(40.dp)
-//                .clip(CircleShape)
-//                .background(MaterialTheme.colorScheme.primary)
-//                .padding(8.dp)
-//        )
-        // Spacer to add space between icon and text
-//        Spacer(modifier = Modifier.width(16.dp))
-//        // Text displaying the person's name
-//        Text(text = person.name, style = MaterialTheme.typography.body1)
+
     }
 }
 

@@ -23,11 +23,11 @@ fun AlertDialog(
         AlertDialog(
             title = {
                 //text to be changed
-                Text(text = stringResource(id = R.string.dialog))
+                Text(text = "Are you sure?")
             },
             text = {
                 //text to be changed
-                Text(text = stringResource(id = R.string.dialog))
+                Text(text = "Once removed from this list it will no longer be available")
             },
             onDismissRequest = {
             },

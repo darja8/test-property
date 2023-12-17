@@ -1,4 +1,8 @@
+import android.annotation.SuppressLint
+import android.app.Activity
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -20,15 +24,33 @@ import com.example.assignemnt_fit.ui.theme.Assignemnt_fitTheme
 import com.example.assignemnt_fit.ui.components.TopLevelScaffold
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.core.view.WindowCompat
 import com.example.assignemnt_fit.model.WeekDay
 import com.example.assignemnt_fit.ui.navigation.Screen
-import com.example.assignemnt_fit.ui.navigation.screens
 
+@SuppressLint("Range")
 @Composable
-fun ExerciseScreen(
+fun HomeScreen(
     navController: NavHostController,
+    topAppBarColor: Color
 ) {
+    val context = LocalContext.current
+    val window = (context as? Activity)?.window
+
+    SideEffect {
+        window?.let {
+            WindowCompat.getInsetsController(it, it.decorView)?.let { controller ->
+                controller.isAppearanceLightStatusBars = true // Adjust based on theme
+                it.statusBarColor = topAppBarColor.toArgb()
+            }
+        }
+    }
     val coroutineScope = rememberCoroutineScope()
     TopLevelScaffold(
         navController = navController,
@@ -62,17 +84,9 @@ fun ExerciseScreen(
                 .padding(start = 4.dp, bottom = 4.dp, top = 65.dp)
         ) {
             items(days) { day ->
-
                 DayScreenContent(day = day) {
                     navController.navigate("${Screen.Day.route}/${day.dayId}")
                 }
-//                DayCard(
-//                    day = day,
-//                    modifier = Modifier
-//                        .padding(end = 4.dp, top = 4.dp)
-//                        .clickable(onClick = { clickAction.invoke() }),
-//                )
-//                navController.navigate("${Screen.Day.route}/${day.resourceId}")
             }
         }
     }
@@ -93,6 +107,6 @@ private fun DayScreenContent(day: WeekDay, clickAction: () -> Unit){
 private fun ExerciseScreenPreview() {
     val navController = rememberNavController()
     Assignemnt_fitTheme(dynamicColor = false) {
-        ExerciseScreen(navController = navController)
+        HomeScreen(navController = navController, topAppBarColor = MaterialTheme.colorScheme.onSecondary)
     }
 }

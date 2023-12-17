@@ -16,12 +16,9 @@ import kotlinx.coroutines.CoroutineScope
 @Composable
 fun SubpageScaffold(
     navController: NavHostController,
-//    alertDialog: AlertDialog,
     floatingActionButton: @Composable () -> Unit = {},
-//    coroutineScope: CoroutineScope,
     pageContent: @Composable (innerPadding: PaddingValues) -> Unit = {}
 ) {
-    val openAlertDialog = remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
             SubpageTopAppBar(navController)

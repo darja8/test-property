@@ -38,11 +38,8 @@ import com.example.assignemnt_fit.model.Exercise
 fun ExerciseItem(
     modifier: Modifier = Modifier,
     exercise: Exercise,
-    deleteExercise: (Exercise) -> Unit = {},
-//    onDeleteClick: () -> Unit, // Add onDeleteClick as a parameter
     onClick: () -> Unit = {}
-)
-{
+) {
     var dialogIsOpen by rememberSaveable { mutableStateOf(false) }
 
     Box(
@@ -67,7 +64,7 @@ fun ExerciseItem(
             // Text displaying the exercise name
             Column {
                 Text(text = exercise.name)
-                Text(text = "${exercise.sets.toString()} sets, ${exercise.repetitions} reps")
+                Text(text = "${exercise.sets} sets, ${exercise.repetitions} reps")
             }
         }
 

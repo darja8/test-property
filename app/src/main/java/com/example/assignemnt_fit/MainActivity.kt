@@ -1,6 +1,6 @@
 package com.example.assignemnt_fit
 
-import ExerciseScreen
+import HomeScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,14 +9,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.assignemnt_fit.model.WeekDay
-import com.example.assignemnt_fit.model.days
 import com.example.assignemnt_fit.ui.day.DayScreen
 import com.example.assignemnt_fit.ui.exercises.ExerciseListScreen
 import com.example.assignemnt_fit.ui.navigation.Screen
@@ -49,7 +48,7 @@ private fun BuildNavigationGraph() {
         navController = navController,
         startDestination = Screen.Home.route
     ) {
-        composable(Screen.Home.route) { ExerciseScreen(navController) }
+        composable(Screen.Home.route) { HomeScreen(navController, Color.White) }
         composable(Screen.Exercises.route) { ExerciseListScreen(navController) }
         composable(
             route = "${Screen.Day.route}/{dayId}",
