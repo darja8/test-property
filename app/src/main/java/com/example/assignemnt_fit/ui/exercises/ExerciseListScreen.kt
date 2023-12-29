@@ -1,7 +1,6 @@
 package com.example.assignemnt_fit.ui.exercises
 
 import androidx.compose.foundation.background
-import com.example.assignemnt_fit.R.*
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,65 +13,72 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.assignemnt_fit.R
-import com.example.assignemnt_fit.model.Exercise
-import com.example.assignemnt_fit.model.exercises
-import com.example.assignemnt_fit.ui.components.AlertDialog
+import com.example.assignemnt_fit.model.ExercisesViewModel
 import com.example.assignemnt_fit.ui.components.SubpageScaffold
-import com.example.assignemnt_fit.ui.theme.Assignemnt_fitTheme
-import com.example.assignemnt_fit.ui.navigation.Screen.*
-import com.example.assignemnt_fit.ui.components.ExerciseItem
+import com.example.assignemnt_fit.ui.navigation.Screen.NewExercise
 
 @Composable
 fun ExerciseListScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    exercisesViewModel: ExercisesViewModel = viewModel()
 ) {
+    val exercises by exercisesViewModel.exerciseList.observeAsState(listOf())
+
     SubpageScaffold(
         navController = navController,
+        title = "Exercises",
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {},
+                onClick = {navController.navigate(NewExercise.route)},
                 modifier = Modifier.padding(16.dp)
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
                     contentDescription = stringResource(R.string.exercise_list))
             }
-        }
+        },
     )
     { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
         ) {
-            // Display the list of exercises using LazyColumn
-            LazyColumn {
-                items(exercises) { exercise ->
-
-                    ExerciseItem(exercise = exercise)
-                    Divider(
-                        modifier = Modifier
-                            .height(1.dp)
-                            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
-                    )
+//            val exercises = listOf<Exercise>()
+//            if (exercises.isEmpty()) {
+//                Text(
+//                    text = "No exercises",
+//                    fontSize = 20.sp,
+//                    modifier = Modifier.padding(16.dp)
+//                )
+//            } else {
+                LazyColumn {
+                    items(exercises) {
+                        ExerciseItem(exercise = it)
+                        Divider(
+                            modifier = Modifier
+                                .height(1.dp)
+                                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
+                        )
+                    }
                 }
             }
-        }
+//        }
     }
 }
 
-
-@Preview(showBackground = true)
-@Composable
-fun ExerciseListScreen() {
-    val navController = rememberNavController()
-    Assignemnt_fitTheme(dynamicColor = false) {
-        ExerciseListScreen(navController)
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun ExerciseListScreen() {
+//    val navController = rememberNavController()
+//    Assignemnt_fitTheme(dynamicColor = false) {
+//        ExerciseListScreen(navController)
+//    }
+//}

@@ -12,7 +12,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-//import com.example.assignemnt_fit.HomeScreenPreview
 import com.example.assignemnt_fit.R
 import com.example.assignemnt_fit.ui.theme.Assignemnt_fitTheme
 

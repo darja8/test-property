@@ -1,4 +1,4 @@
-package com.example.assignemnt_fit.ui.components
+package com.example.assignemnt_fit.ui.exercises
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -31,6 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.assignemnt_fit.R
 import com.example.assignemnt_fit.model.Exercise
+import com.example.assignemnt_fit.ui.components.AlertDialog
 
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -52,7 +53,7 @@ fun ExerciseItem(
             verticalAlignment = Alignment.CenterVertically
         ){
             Image(
-                painter = painterResource(id = R.drawable.workout), // Assuming photoResId is the resource ID of the photo
+                painter = painterResource(id = R.drawable.workout),
                 contentDescription = null, // Provide a meaningful content description
                 contentScale = ContentScale.FillHeight,
                 modifier = Modifier

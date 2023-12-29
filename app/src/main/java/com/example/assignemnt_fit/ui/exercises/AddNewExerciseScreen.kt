@@ -1,35 +1,29 @@
 
-import android.graphics.drawable.Icon
-import android.widget.GridLayout
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Create
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,20 +34,25 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.DefaultShadowColor
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.assignemnt_fit.R
+import com.example.assignemnt_fit.model.Exercise
 import com.example.assignemnt_fit.ui.components.SubpageScaffold
 import com.example.assignemnt_fit.ui.theme.Assignemnt_fitTheme
-import com.example.assignemnt_fit.R
-import org.checkerframework.checker.units.qual.C
 
 
 @Composable
-fun AddNewExerciseScreen() {
-    SubpageScaffold(navController = rememberNavController()
-    ) {
+fun AddNewExerciseScreen(
+    navController: NavHostController
+) {
+    SubpageScaffold(navController = navController, title = "New Exercise")
+    {
         Column {
             val modifier = Modifier
             var exerciseTitle by remember { mutableStateOf("") }
@@ -61,7 +60,7 @@ fun AddNewExerciseScreen() {
             var numberOfReps by remember { mutableStateOf("") }
             var weight by remember { mutableStateOf("") }
             var timeInMinutes by remember { mutableStateOf("") }
-            val checked = remember { mutableStateOf(false) }
+            val isDropset: MutableState<Boolean> = remember { mutableStateOf(false) }
 
             Row (
                 verticalAlignment = Alignment.CenterVertically,
@@ -89,7 +88,6 @@ fun AddNewExerciseScreen() {
                             .border(0.1.dp, Color.Gray, RoundedCornerShape(10.dp))
                     )
                 }
-                var text by remember { mutableStateOf("") }
                 TextField(
                     modifier = Modifier
                         .width(180.dp)
@@ -99,70 +97,123 @@ fun AddNewExerciseScreen() {
                     label = { Text("Title") }
                 )
             }
-            Box(modifier = Modifier
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
                 .fillMaxSize(),
-                contentAlignment = Alignment.TopCenter) {
-                Column {
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .width(280.dp)
-                            .height(60.dp),
-                        value = numberOfSets,
-                        onValueChange = { numberOfSets = it },
-                        label = { Text("Number of sets") }
+
+            ) {
+                OutlinedTextField(
+                    modifier = Modifier
+                        .width(280.dp)
+                        .height(60.dp),
+                    value = numberOfSets,
+                    onValueChange = {
+                        numberOfSets = it },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    label = {  }
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+
+                OutlinedTextField(
+                    modifier = Modifier
+                        .width(280.dp)
+                        .height(60.dp),
+                    value = numberOfReps,
+                    onValueChange = { numberOfReps = it },
+                    label = { Text("Number of reps") }
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                OutlinedTextField(
+                    modifier = Modifier
+                        .width(280.dp)
+                        .height(60.dp),
+                    value = weight,
+                    onValueChange = { weight = it },
+                    label = { Text("Weight") }
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                OutlinedTextField(
+                    modifier = Modifier
+                        .width(280.dp)
+                        .height(60.dp),
+                    value = timeInMinutes,
+                    onValueChange = { timeInMinutes = it },
+                    label = { Text("Time in minutes") }
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                Row (
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = modifier
+                ) {
+                    Text(text = "Drop-set")
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Icon(imageVector = Icons.Outlined.Info,
+                        contentDescription = "Drop-set information",
+                        modifier = Modifier.size(20.dp))
+                    Checkbox(
+                        checked = isDropset.value,
+                        onCheckedChange = { isChecked -> isDropset.value = isChecked }
                     )
-                    Spacer(modifier = Modifier.height(20.dp))
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .width(280.dp)
-                            .height(60.dp),
-                        value = numberOfReps,
-                        onValueChange = { numberOfReps = it },
-                        label = { Text("Number of reps") }
+                }
+                Spacer(modifier = Modifier.height(30.dp))
+                Button(onClick = {
+                    numberOfReps.toInt()
+                    numberOfSets.toInt()
+                    insertExercise(
+                        title = exerciseTitle,
+                        reps = stringToInt(numberOfReps),
+                        sets = stringToInt(numberOfSets),
+                        weight = stringToInt(weight),
+                        duration = stringToInt(timeInMinutes),
+                        isDropset = isDropset
                     )
-                    Spacer(modifier = Modifier.height(20.dp))
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .width(280.dp)
-                            .height(60.dp),
-                        value = weight,
-                        onValueChange = { weight = it },
-                        label = { Text("Weight") }
-                    )
-                    Spacer(modifier = Modifier.height(20.dp))
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .width(280.dp)
-                            .height(60.dp),
-                        value = timeInMinutes,
-                        onValueChange = { timeInMinutes = it },
-                        label = { Text("Time in minutes") }
-                    )
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Row (
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = modifier
-                    ) {
-                        Text(text = "Drop-set")
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Icon(imageVector = Icons.Filled.Info,
-                            contentDescription = "Drop-set information",
-                            modifier = Modifier.size(20.dp))
-                        Checkbox(
-                            checked = checked.value,
-                            onCheckedChange = { isChecked -> checked.value = isChecked }
-                        )
-                    }
+                }
+                ){
+                    Text(text = "Save")
+                }
+                Button(
+                    onClick = { },
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer),
+                ) {
+                    Text(text = "Cancel", color = MaterialTheme.colorScheme.onTertiaryContainer)
                 }
             }
         }
     }
 }
 
+fun stringToInt(input: String): Int {
+    return input.toInt()
+}
+
+private fun insertExercise(
+    title: String,
+    sets: Int,
+    reps: Int,
+    weight: Int,
+    isDropset: MutableState<Boolean>,
+    duration: Int
+){
+    if (title.isNotEmpty() && !sets.equals(null) && !reps.equals(null) && !duration.equals(null)){
+        val exercise = Exercise(
+            name = title,
+            sets = sets,
+            repetitions = reps,
+            weight = weight,
+            duration = duration,
+            dropSet = isDropset
+        )
+
+    }
+
+}
 @Preview(showBackground = true)
 @Composable
 fun PreviewAddNewExerciseScreen() {
+    val navController = rememberNavController()
     Assignemnt_fitTheme {
-        AddNewExerciseScreen()
+        AddNewExerciseScreen(navController = navController)
     }
 }
