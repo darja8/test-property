@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-//    id("kotlin-kapt")
+    id("kotlin-kapt")
 }
 
 android {
@@ -54,6 +54,11 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
 }
 
 dependencies {
@@ -73,10 +78,11 @@ dependencies {
     implementation ("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha13")
     implementation("com.google.firebase:firebase-inappmessaging-ktx:20.4.0")
     implementation("androidx.room:room-common:2.6.1")
-    annotationProcessor("androidx.room:room-compiler:2.6.1")
+//    annotationProcessor("androidx.room:room-compiler:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-runtime:2.5.2")
     implementation("androidx.room:room-ktx:2.5.2")
-//    kapt("androidx.room:room-compiler:2.5.2")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

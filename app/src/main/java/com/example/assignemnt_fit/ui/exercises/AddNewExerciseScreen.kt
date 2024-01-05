@@ -23,7 +23,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,17 +38,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.assignemnt_fit.R
 import com.example.assignemnt_fit.model.Exercise
+import com.example.assignemnt_fit.model.ExercisesViewModel
 import com.example.assignemnt_fit.ui.components.SubpageScaffold
 import com.example.assignemnt_fit.ui.theme.Assignemnt_fitTheme
 
 
 @Composable
 fun AddNewExerciseScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    exercisesViewModel: ExercisesViewModel = viewModel() // Get the ViewModel
+
 ) {
     SubpageScaffold(navController = navController, title = "New Exercise")
     {
@@ -60,7 +63,7 @@ fun AddNewExerciseScreen(
             var numberOfReps by remember { mutableStateOf("") }
             var weight by remember { mutableStateOf("") }
             var timeInMinutes by remember { mutableStateOf("") }
-            val isDropset: MutableState<Boolean> = remember { mutableStateOf(false) }
+            var isDropset by remember { mutableStateOf(false) }
 
             Row (
                 verticalAlignment = Alignment.CenterVertically,
@@ -152,22 +155,32 @@ fun AddNewExerciseScreen(
                         contentDescription = "Drop-set information",
                         modifier = Modifier.size(20.dp))
                     Checkbox(
-                        checked = isDropset.value,
-                        onCheckedChange = { isChecked -> isDropset.value = isChecked }
+                        checked = isDropset,
+                        onCheckedChange = { isChecked -> isDropset = isChecked }
                     )
                 }
                 Spacer(modifier = Modifier.height(30.dp))
                 Button(onClick = {
-                    numberOfReps.toInt()
-                    numberOfSets.toInt()
-                    insertExercise(
-                        title = exerciseTitle,
-                        reps = stringToInt(numberOfReps),
-                        sets = stringToInt(numberOfSets),
-                        weight = stringToInt(weight),
-                        duration = stringToInt(timeInMinutes),
-                        isDropset = isDropset
-                    )
+                    // Convert string values to integers safely
+                    val setsInt = numberOfSets.toIntOrNull() ?: 0
+                    val repsInt = numberOfReps.toIntOrNull() ?: 0
+                    val weightInt = weight.toIntOrNull() ?: 0
+                    val durationInt = timeInMinutes.toIntOrNull() ?: 0
+
+                    // Create and insert the exercise using the ViewModel
+                    if (exerciseTitle.isNotEmpty()) {
+                        exercisesViewModel.insertExercise(
+                            Exercise(
+                                name = exerciseTitle,
+                                sets = setsInt,
+                                repetitions = repsInt,
+                                weight = weightInt,
+                                duration = durationInt,
+                                dropSet = isDropset
+                            )
+                        )
+                        navController.popBackStack()
+                    }
                 }
                 ){
                     Text(text = "Save")
@@ -184,16 +197,12 @@ fun AddNewExerciseScreen(
     }
 }
 
-fun stringToInt(input: String): Int {
-    return input.toInt()
-}
-
 private fun insertExercise(
     title: String,
     sets: Int,
     reps: Int,
     weight: Int,
-    isDropset: MutableState<Boolean>,
+    isDropset: Boolean,
     duration: Int
 ){
     if (title.isNotEmpty() && !sets.equals(null) && !reps.equals(null) && !duration.equals(null)){
@@ -205,10 +214,9 @@ private fun insertExercise(
             duration = duration,
             dropSet = isDropset
         )
-
     }
-
 }
+
 @Preview(showBackground = true)
 @Composable
 fun PreviewAddNewExerciseScreen() {

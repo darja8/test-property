@@ -6,49 +6,92 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.assignemnt_fit.model.Exercise
 import com.example.assignemnt_fit.model.ExerciseDao
-import com.example.assignemnt_fit.model.WeekdayDao
+import com.example.assignemnt_fit.model.ExerciseWeekDayJoin
+import com.example.assignemnt_fit.model.ExerciseWeekDayJoinDao
+import com.example.assignemnt_fit.model.WeekDay
+import com.example.assignemnt_fit.model.WeekDayDao
+//import com.example.assignemnt_fit.model.WeekdayDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Database(entities = [Exercise::class], version = 1)
+@Database(entities = [Exercise::class, WeekDay::class, ExerciseWeekDayJoin::class], version = 2)
 abstract class PowerTrackRoomDatabase : RoomDatabase(){
 
     abstract fun exerciseDao(): ExerciseDao
-    abstract fun weekdayDao(): WeekdayDao
+    abstract fun weekdayDao(): WeekDayDao
+    abstract fun exerciseWeekDayJoinDao(): ExerciseWeekDayJoinDao
 
     companion object{
+        @Volatile
         private var instance: PowerTrackRoomDatabase? = null
         private val coroutineScope = CoroutineScope(Dispatchers.IO)
         @Synchronized
-        fun getDatabase(context: Context): PowerTrackRoomDatabase?{
-            if (instance == null) {
-                instance =
-                    Room.databaseBuilder<PowerTrackRoomDatabase>(
-                        context.applicationContext,
-                        PowerTrackRoomDatabase::class.java,
-                        "training_app_database"
-                    )
-                        .allowMainThreadQueries()
-                        .addCallback(roomDatabaseCallback(context))
-//                        .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
-                        .build()
+        fun getDatabase(context: Context): PowerTrackRoomDatabase {
+            return instance ?: synchronized(this) {
+                var instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    PowerTrackRoomDatabase::class.java,
+                    "PowerTrackDataBase"
+                )
+                .addCallback(roomDatabaseCallback(context))
+                .fallbackToDestructiveMigration()
+                .build()
+                this.instance = instance
+                instance
             }
-            return instance
         }
+
+//        private fun roomDatabaseCallback(context: Context): Callback {
+//            return object : Callback() {
+//                override fun onCreate(db: SupportSQLiteDatabase) {
+//                    super.onCreate(db)
+//                    coroutineScope.launch {
+//                        populateDatabase(context, getDatabase(context)!!)
+//                        val daysToInsert  = listOf(
+//                            WeekDay(0, "Monday", ""),
+//                            WeekDay(0, "Tuesday", ""),
+//                            WeekDay(0, "Wednesday", ""),
+//                            WeekDay(0, "Thursday", ""),
+//                            WeekDay(0, "Friday", ""),
+//                            WeekDay(0, "Saturday", ""),
+//                            WeekDay(0, "Sunday", ""),)
+//                        val weekDayDao = instance!!.weekdayDao()
+//                        weekDayDao.insertAll(*daysToInsert.toTypedArray())
+//                    }
+//                }
+//            }
+//        }
+
         private fun roomDatabaseCallback(context: Context): Callback {
             return object : Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)
                     coroutineScope.launch {
-                        populateDatabase(context, getDatabase(context)!!)
+                        val daysToInsert = listOf(
+                            WeekDay(0, "Monday", ""),
+                            WeekDay(0, "Tuesday", ""),
+                            WeekDay(0, "Wednesday", ""),
+                            WeekDay(0, "Thursday", ""),
+                            WeekDay(0, "Friday", ""),
+                            WeekDay(0, "Saturday", ""),
+                            WeekDay(0, "Sunday", ""),)
+                        
+                        val weekDayDao = instance!!.weekdayDao()
+                        weekDayDao.insertAll(*daysToInsert.toTypedArray())
                     }
                 }
             }
         }
-     private fun populateDatabase(context: Context, instance: PowerTrackRoomDatabase){
 
-     }
+//        val dayDao = PowerTrackRoomDatabase.daysToInsert
+//        private fun populateDatabase(context: Context, db: PowerTrackRoomDatabase) {
+//            coroutineScope.launch {
+//                db.weekdayDao().insertAll(
+////                    *daysToInsert.toTypedArray()
+//                    )
+//            }
+//        }
     }
 }
 

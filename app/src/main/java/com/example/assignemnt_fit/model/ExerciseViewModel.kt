@@ -10,13 +10,28 @@ import kotlinx.coroutines.launch
 
 class ExercisesViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: PowerTrackRepository = PowerTrackRepository(application)
-    
-    var exerciseList: LiveData<List<Exercise>> = repository.getAllExercises()
-        private set
+
+    val allExercises: LiveData<List<Exercise>> = repository.allExercises
+
+//    var exerciseList: LiveData<List<Exercise>> = repository.getAllExercises()
+//        private set
 
     fun insertExercise(newExercise: Exercise) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.insert(newExercise)
         }
     }
+
+    fun deleteExercise(exercise: Exercise) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteExercise(exercise)
+        }
+    }
+
+    fun addWeekDay(weekDay: WeekDay) {
+        viewModelScope.launch {
+            repository.insertWeekDay(weekDay)
+        }
+    }
+
 }

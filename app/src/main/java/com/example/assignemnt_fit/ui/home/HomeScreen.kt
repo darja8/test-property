@@ -1,4 +1,5 @@
 
+//import com.example.assignemnt_fit.model.days
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
@@ -12,17 +13,20 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.assignemnt_fit.R
 import com.example.assignemnt_fit.model.WeekDay
-import com.example.assignemnt_fit.model.days
+import com.example.assignemnt_fit.model.WeekDayViewModel
 import com.example.assignemnt_fit.ui.components.*
 import com.example.assignemnt_fit.ui.day.DayCard
 import com.example.assignemnt_fit.ui.navigation.Screen
@@ -34,23 +38,10 @@ fun HomeScreen(
     navController: NavHostController,
     topAppBarColor: Color
 ) {
-//    val context = LocalContext.current.applicationContext
-//    LaunchedEffect(key1 = Unit){
-//        val repository = PowerTrackRepository(context as Application)
-//        repository.getAllExercises()
-//    }
-//    val window = (context as? Activity)?.window
-//    val state = rememberLazyGridState()
-
-//    SideEffect {
-//        window?.let {
-//            WindowCompat.getInsetsController(it, it.decorView)?.let { controller ->
-//                controller.isAppearanceLightStatusBars = true // Adjust based on theme
-//                it.statusBarColor = topAppBarColor.toArgb()
-//            }
-//        }
-//    }
     val coroutineScope = rememberCoroutineScope()
+    val viewModel: WeekDayViewModel = viewModel()
+    val weekDays by viewModel.weekDays.observeAsState(initial = emptyList())
+
     TopLevelScaffold(
         navController = navController,
         floatingActionButton = {
@@ -74,22 +65,17 @@ fun HomeScreen(
         coroutineScope = coroutineScope
     )
     {
-//        val context = LocalContext.current.applicationContext
-//        LaunchedEffect(key1 = Unit){
-//            val repository = PowerTrackRepository(context as Application)
-//            }
-
         LazyVerticalGrid(
             columns = GridCells.Fixed(1),
-//            state = state,
             modifier = Modifier
                 .padding(start = 4.dp, bottom = 4.dp, top = 65.dp)
         ) {
-            items(days) { day ->
+            items(weekDays) { day -> // Use weekDays here
                 DayScreenContent(day = day) {
-                    navController.navigate("${Screen.Day.route}/${day.dayId}")
+                    navController.navigate("${Screen.Day.route}/${day.id}")
                 }
             }
+
         }
     }
 }

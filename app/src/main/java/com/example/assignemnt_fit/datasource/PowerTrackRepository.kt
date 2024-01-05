@@ -1,14 +1,35 @@
 package com.example.assignemnt_fit.datasource
 
 import android.app.Application
+import androidx.lifecycle.LiveData
 import com.example.assignemnt_fit.model.Exercise
+import com.example.assignemnt_fit.model.ExerciseDao
+import com.example.assignemnt_fit.model.ExerciseWeekDayJoin
+import com.example.assignemnt_fit.model.ExerciseWeekDayJoinDao
 import com.example.assignemnt_fit.model.WeekDay
+import com.example.assignemnt_fit.model.WeekDayDao
 
 class PowerTrackRepository (application: Application){
-    private val exerciseDao = PowerTrackRoomDatabase.getDatabase(application)!!.exerciseDao()
-    private val weekdayDao = PowerTrackRoomDatabase.getDatabase(application)!!.weekdayDao()
+    private val exerciseDao: ExerciseDao
+    private val weekDayDao: WeekDayDao
+    private val exerciseWeekDayJoinDao: ExerciseWeekDayJoinDao
 
 
+    init {
+        val db = PowerTrackRoomDatabase.getDatabase(application)
+        exerciseDao = db.exerciseDao()
+        weekDayDao = db.weekdayDao()
+        exerciseWeekDayJoinDao = db.exerciseWeekDayJoinDao()
+    }
+
+
+    val allExercises: LiveData<List<Exercise>> = exerciseDao.getAllExercises()
+    val allWeekDays: LiveData<List<WeekDay>> = weekDayDao.getAllWeekDays()
+
+
+    /**
+     * Exercises
+     */
     suspend fun insert(exercise: Exercise){
         exerciseDao.insertExercise(exercise)
     }
@@ -24,10 +45,10 @@ class PowerTrackRepository (application: Application){
         exerciseDao.updateExercise(exercise)
     }
 
-    fun getAllExercises() = exerciseDao.getAllExercises()
+//    fun getAllExercises() = exerciseDao.getAllExercises()
 
     fun getExercises(
-        id: Int,
+        id: Long,
         name: String,
         sets: Int,
         repetitions: Int,
@@ -36,20 +57,27 @@ class PowerTrackRepository (application: Application){
         dropSet: Boolean,
     ) = exerciseDao.getExercises(id,name,sets,repetitions,weight,duration,dropSet)
 
-    suspend fun insertWeekDay(weekDay: WeekDay) {
-        weekdayDao.insertWeekDay(weekDay)
+    /**
+     * WeekDays
+     */
+
+    suspend fun insertAllDays(weekDay: WeekDay) {
+
+//        weekDayDao.insertAll(weekDay)
     }
 
-    suspend fun updateWeekDay(weekDay: WeekDay) {
-        weekdayDao.updateWeekDay(weekDay)
+    /**
+     * Exercise and WeekDay join
+     */
+    suspend fun linkExerciseToDay(exerciseId: Long, dayId: Long) {
+        exerciseDao.insertExerciseWeekDayJoin(ExerciseWeekDayJoin(exerciseId,dayId))
     }
 
-//    suspend fun deleteWeekDay(weekDay: WeekDay) {
-//        weekdayDao.deleteWeekDay(weekDay)
-//    }
+    fun getExercisesForDay(dayId: Long): LiveData<List<Exercise>> {
+        return exerciseDao.getExercisesForDay(dayId)
+    }
 
-    fun getAllWeekDays() = weekdayDao.getAllWeekDays()
+    fun insertWeekDay(weekDay: WeekDay) {
 
-    fun getWeekDayById(id: Int) = weekdayDao.getWeekDayById(id)
-
+    }
 }

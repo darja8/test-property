@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,7 +32,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.assignemnt_fit.R
 import com.example.assignemnt_fit.model.Exercise
-import com.example.assignemnt_fit.ui.components.AlertDialog
 
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -39,7 +39,8 @@ import com.example.assignemnt_fit.ui.components.AlertDialog
 fun ExerciseItem(
     modifier: Modifier = Modifier,
     exercise: Exercise,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    onDelete: (Exercise) -> Unit
 ) {
     var dialogIsOpen by rememberSaveable { mutableStateOf(false) }
 
@@ -92,13 +93,47 @@ fun ExerciseItem(
                     imageVector = Icons.Filled.Delete,
                     contentDescription = stringResource(id = R.string.exercise_list)
                 )
-                AlertDialog(
-                    dialogIsOpen = dialogIsOpen,
-                    dialogOpen = { isOpen ->
-                        dialogIsOpen = isOpen
-                    },
+//                AlertDialog(
+//                    dialogIsOpen = dialogIsOpen,
+//                    dialogOpen = { isOpen ->
+//                        dialogIsOpen = isOpen
+//                    },
+//                )
+            }
+            if (dialogIsOpen){
+                DeleteConfirmationDialog(
+                    onConfirm = {
+                        dialogIsOpen = false
+                        onDelete(exercise) },
+                    onDismiss = { dialogIsOpen = false }
                 )
             }
         }
     }
+}
+
+@Composable
+fun DeleteConfirmationDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    androidx.compose.material3.AlertDialog(
+        title = { Text(text = "Are you sure?") },
+        text = { Text(text = "Once removed from this list it will no longer be available") },
+        onDismissRequest = { onDismiss() },
+        confirmButton = {
+            TextButton(
+                onClick = { onConfirm() }
+            ) {
+                Text("Remove")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { onDismiss() }
+            ) {
+                Text("Cancel")
+            }
+        }
+    )
 }

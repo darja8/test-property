@@ -1,5 +1,6 @@
 package com.example.assignemnt_fit.ui.day
 
+//import com.example.assignemnt_fit.model.days
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,8 +13,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.assignemnt_fit.model.WeekDay
-import com.example.assignemnt_fit.model.days
-import com.example.assignemnt_fit.ui.theme.Assignemnt_fitTheme
 
 @Composable
 fun DayCard(
@@ -60,8 +59,8 @@ fun DayCard(
 @Preview
 @Composable
 private fun CatCardPreview(){
-    Assignemnt_fitTheme(darkTheme = true,
-        dynamicColor = false) {
-        DayCard(day = days[0])
-    }
+//    Assignemnt_fitTheme(darkTheme = true,
+//        dynamicColor = false) {
+//        DayCard(day = days[0])
+//    }
 }

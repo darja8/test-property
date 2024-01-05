@@ -25,12 +25,13 @@ import com.example.assignemnt_fit.model.ExercisesViewModel
 import com.example.assignemnt_fit.ui.components.SubpageScaffold
 import com.example.assignemnt_fit.ui.navigation.Screen.NewExercise
 
+
 @Composable
 fun ExerciseListScreen(
     navController: NavHostController,
     exercisesViewModel: ExercisesViewModel = viewModel()
 ) {
-    val exercises by exercisesViewModel.exerciseList.observeAsState(listOf())
+    val exercises by exercisesViewModel.allExercises.observeAsState(listOf())
 
     SubpageScaffold(
         navController = navController,
@@ -60,8 +61,11 @@ fun ExerciseListScreen(
 //                )
 //            } else {
                 LazyColumn {
-                    items(exercises) {
-                        ExerciseItem(exercise = it)
+                    items(exercises) { exercise ->
+                        ExerciseItem(
+                            exercise = exercise,
+                            onDelete = { exercisesViewModel.deleteExercise(it) }
+                        )
                         Divider(
                             modifier = Modifier
                                 .height(1.dp)
@@ -69,16 +73,6 @@ fun ExerciseListScreen(
                         )
                     }
                 }
-            }
-//        }
+        }
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun ExerciseListScreen() {
-//    val navController = rememberNavController()
-//    Assignemnt_fitTheme(dynamicColor = false) {
-//        ExerciseListScreen(navController)
-//    }
-//}
