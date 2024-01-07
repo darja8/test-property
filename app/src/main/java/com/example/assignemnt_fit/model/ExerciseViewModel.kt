@@ -2,6 +2,7 @@ package com.example.assignemnt_fit.model
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.assignemnt_fit.datasource.PowerTrackRepository
 import kotlinx.coroutines.Dispatchers
@@ -24,10 +25,19 @@ class ExercisesViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun addWeekDay(weekDay: WeekDay) {
-        viewModelScope.launch {
-            repository.insertWeekDay(weekDay)
+    fun updateExercise(exercise: Exercise) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.updateExercise(exercise)
         }
+    }
+
+
+    fun getExerciseById(id: Long): LiveData<Exercise?> {
+        val result = MutableLiveData<Exercise?>()
+        viewModelScope.launch {
+            result.value = repository.getExerciseById(id)
+        }
+        return result
     }
 
 }

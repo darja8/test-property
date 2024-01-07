@@ -38,4 +38,8 @@ interface ExerciseDao {
         dropSet: Boolean,
     ): LiveData<List<Exercise>>
 
+    @Query("SELECT * FROM exercises WHERE exerciseId = :id")
+    suspend fun getExerciseById(id: Long): Exercise?
+
+
 }

@@ -37,6 +37,16 @@ fun BuildNavigationGraph(
         ) { navBackStackEntry ->
             DayScreen(navBackStackEntry.arguments!!.getLong("dayId"), navController, weekDayViewModel, exercisesViewModel)
         }
-        composable(Screen.NewExercise.route){AddNewExerciseScreen(navController, exercisesViewModel)}
+        composable(
+            route = "newExercise/{exerciseId}",
+            arguments = listOf(navArgument("exerciseId") {
+                type = NavType.LongType
+                defaultValue = -1 // Default value for new exercise
+            })
+        ) { backStackEntry ->
+            val exerciseId = backStackEntry.arguments?.getLong("exerciseId")
+            AddNewExerciseScreen(navController, exerciseId, exercisesViewModel)
+        }
+
     }
 }

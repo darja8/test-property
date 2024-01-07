@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface WeekDayDao {
@@ -18,6 +19,11 @@ interface WeekDayDao {
     fun getAllWeekDays(): LiveData<List<WeekDay>>
 
     @Query("SELECT * FROM WeekDays WHERE weekDayId = :weekDayId")
-    fun getDayById(weekDayId: Long): LiveData<WeekDay>
+    fun getDaysById(weekDayId: Long): LiveData<WeekDay>
 
+    @Query("SELECT * FROM WeekDays WHERE weekDayId = :weekdayId")
+    suspend fun getDayById(weekdayId: Long): WeekDay?
+
+    @Update
+    suspend fun updateWeekDay(weekDay: WeekDay)
 }

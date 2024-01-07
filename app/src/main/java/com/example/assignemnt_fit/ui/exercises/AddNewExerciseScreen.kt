@@ -23,7 +23,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,24 +48,33 @@ import com.example.assignemnt_fit.model.Exercise
 import com.example.assignemnt_fit.model.ExercisesViewModel
 import com.example.assignemnt_fit.ui.components.SubpageScaffold
 import com.example.assignemnt_fit.ui.theme.Assignemnt_fitTheme
-
-
 @Composable
 fun AddNewExerciseScreen(
     navController: NavHostController,
-    exercisesViewModel: ExercisesViewModel = viewModel() // Get the ViewModel
-
+    exerciseId: Long? = null,
+    exercisesViewModel: ExercisesViewModel = viewModel()
 ) {
+    val exerciseToEdit by exercisesViewModel.getExerciseById(exerciseId ?: -1).observeAsState()
+    val modifier = Modifier
+    var exerciseTitle by remember { mutableStateOf(exerciseToEdit?.name ?: "") }
+    var numberOfSets by remember { mutableStateOf(exerciseToEdit?.sets?.toString() ?: "") }
+    var numberOfReps by remember { mutableStateOf(exerciseToEdit?.repetitions?.toString()?:"") }
+    var weight by remember { mutableStateOf(exerciseToEdit?.weight?.toString()?:"") }
+    var timeInMinutes by remember { mutableStateOf(exerciseToEdit?.duration?.toString()?:"") }
+    var isDropset by remember { mutableStateOf(false) }
+
+    LaunchedEffect(exerciseToEdit) {
+        exerciseTitle = exerciseToEdit?.name ?: ""
+        numberOfSets = exerciseToEdit?.sets?.toString() ?: ""
+        numberOfReps = exerciseToEdit?.repetitions?.toString() ?: ""
+        weight = exerciseToEdit?.weight?.toString() ?: ""
+        timeInMinutes = exerciseToEdit?.duration?.toString() ?: ""
+        isDropset = exerciseToEdit?.dropSet ?: false
+    }
+
     SubpageScaffold(navController = navController, title = "New Exercise")
     {
         Column {
-            val modifier = Modifier
-            var exerciseTitle by remember { mutableStateOf("") }
-            var numberOfSets by remember { mutableStateOf("") }
-            var numberOfReps by remember { mutableStateOf("") }
-            var weight by remember { mutableStateOf("") }
-            var timeInMinutes by remember { mutableStateOf("") }
-            var isDropset by remember { mutableStateOf(false) }
 
             Row (
                 verticalAlignment = Alignment.CenterVertically,
@@ -110,11 +121,10 @@ fun AddNewExerciseScreen(
                     modifier = Modifier
                         .width(280.dp)
                         .height(60.dp),
-                    value = numberOfSets,
-                    onValueChange = {
-                        numberOfSets = it },
+                    value = numberOfReps,
+                    onValueChange = { numberOfReps = it },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    label = {  }
+                    label = { Text("Number of reps") }
                 )
                 Spacer(modifier = Modifier.height(20.dp))
 
@@ -122,9 +132,10 @@ fun AddNewExerciseScreen(
                     modifier = Modifier
                         .width(280.dp)
                         .height(60.dp),
-                    value = numberOfReps,
-                    onValueChange = { numberOfReps = it },
-                    label = { Text("Number of reps") }
+                    value = numberOfSets,
+                    onValueChange = { numberOfSets = it },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    label = { Text("Number of sets") }
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 OutlinedTextField(
@@ -133,6 +144,7 @@ fun AddNewExerciseScreen(
                         .height(60.dp),
                     value = weight,
                     onValueChange = { weight = it },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     label = { Text("Weight") }
                 )
                 Spacer(modifier = Modifier.height(20.dp))
@@ -142,6 +154,7 @@ fun AddNewExerciseScreen(
                         .height(60.dp),
                     value = timeInMinutes,
                     onValueChange = { timeInMinutes = it },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     label = { Text("Time in minutes") }
                 )
                 Spacer(modifier = Modifier.height(20.dp))
@@ -161,29 +174,34 @@ fun AddNewExerciseScreen(
                 }
                 Spacer(modifier = Modifier.height(30.dp))
                 Button(onClick = {
-                    // Convert string values to integers safely
                     val setsInt = numberOfSets.toIntOrNull() ?: 0
                     val repsInt = numberOfReps.toIntOrNull() ?: 0
                     val weightInt = weight.toIntOrNull() ?: 0
                     val durationInt = timeInMinutes.toIntOrNull() ?: 0
 
-                    // Create and insert the exercise using the ViewModel
-                    if (exerciseTitle.isNotEmpty()) {
-                        exercisesViewModel.insertExercise(
-                            Exercise(
-                                name = exerciseTitle,
-                                sets = setsInt,
-                                repetitions = repsInt,
-                                weight = weightInt,
-                                duration = durationInt,
-                                dropSet = isDropset
-                            )
+                    if (exerciseToEdit == null) {
+                        exercisesViewModel.insertExercise(Exercise(
+                            name = exerciseTitle,
+                            sets = setsInt,
+                            repetitions = repsInt,
+                            weight = weightInt,
+                            duration = durationInt,
+                            dropSet = isDropset
+                        ))
+                    } else {
+                        val updatedExercise = exerciseToEdit!!.copy(
+                            name = exerciseTitle,
+                            sets = setsInt,
+                            repetitions = repsInt,
+                            weight = weightInt,
+                            duration = durationInt,
+                            dropSet = isDropset
                         )
-                        navController.popBackStack()
+                        exercisesViewModel.updateExercise(updatedExercise)
                     }
-                }
-                ){
-                    Text(text = "Save")
+                    navController.popBackStack()
+                }) {
+                    Text(text = if (exerciseToEdit == null) "Save" else "Update")
                 }
                 Button(
                     onClick = { },

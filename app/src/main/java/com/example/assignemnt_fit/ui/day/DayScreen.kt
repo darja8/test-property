@@ -2,11 +2,13 @@ package com.example.assignemnt_fit.ui.day
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -30,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -40,6 +43,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,7 +54,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import com.example.assignemnt_fit.R
 import com.example.assignemnt_fit.R.*
 import com.example.assignemnt_fit.model.Exercise
 import com.example.assignemnt_fit.model.ExercisesViewModel
@@ -72,14 +76,14 @@ fun DayScreen(
     val day by viewModelWeekDay.day.observeAsState()
     val showCustomBottomSheet = remember { mutableStateOf(false) }
     val exercises by viewModelExercise.allExercises.observeAsState(initial = emptyList())
-//    val exercisesForDay by viewModelWeekDay.exercisesForDay.observeAsState(initial = emptyList())
     val exercisesForDay by viewModelWeekDay.getExercisesForDay(selectedDayId).observeAsState(initial = emptyList())
+    var showEditDialog by remember { mutableStateOf(false) }
+
 
     LaunchedEffect(selectedDayId) {
         viewModelWeekDay.loadDayById(selectedDayId)
         viewModelWeekDay.loadExercisesForDay(selectedDayId)
     }
-
 
     Scaffold(
         topBar = {
@@ -88,42 +92,61 @@ fun DayScreen(
                     selectedDayId = selectedDayId,
                     navController = navController,
                     day = day!!,
-                    onAddExerciseClick = { showCustomBottomSheet.value = true }
+                    onAddExerciseClick = { showCustomBottomSheet.value = true },
+                    onEditTitleClick = {showEditDialog = true}
                 )
             }
         }
     ) { paddingValues ->
-            LazyColumn(modifier = Modifier.padding(top = 60.dp)) {
-                items(exercisesForDay) { exercise ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        contentAlignment = Alignment.CenterStart
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
+        Scaffold()
+        { paddingValues ->
+            if (exercisesForDay.isEmpty()) {
+                // Display an image when there are no exercises for the day
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.no_training), // Replace with your image resource
+                        contentDescription = "No Exercises",
+                        modifier = Modifier.size(width = 300.dp, height = 300.dp)
+                    )
+//                    Text(text = "No exercises added")
+                }
+            } else {
+                LazyColumn(modifier = Modifier.padding(top = 60.dp)) {
+                    items(exercisesForDay) { exercise ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.CenterStart
                         ) {
-                            Image(
-                                painter = painterResource(id = drawable.workout),
-                                contentDescription = null, // Provide a meaningful content description
-                                contentScale = ContentScale.FillHeight,
-                                modifier = Modifier
-                                    .height(60.dp)
-                                    .width(60.dp)
-                                    .clip(shape = RectangleShape)
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Image(
+                                    painter = painterResource(id = drawable.workout),
+                                    contentDescription = null, // Provide a meaningful content description
+                                    contentScale = ContentScale.FillHeight,
+                                    modifier = Modifier
+                                        .height(60.dp)
+                                        .width(60.dp)
+                                        .clip(shape = RectangleShape)
+                                )
+                                Spacer(modifier = Modifier.width(16.dp))
 
-                            Column {
-                                Text(text = exercise.name)
-                                Text(text = "${exercise.sets} sets, ${exercise.repetitions} reps")
+                                Column {
+                                    Text(text = exercise.name)
+                                    Text(text = "${exercise.sets} sets, ${exercise.repetitions} reps")
+                                }
                             }
-                        }
 
+                        }
                     }
                 }
             }
+        }
     }
 
     if (showCustomBottomSheet.value) {
@@ -136,6 +159,16 @@ fun DayScreen(
                 }
                 // Trigger UI update
                 viewModelWeekDay.getExercisesForDay(selectedDayId)
+            }
+        )
+    }
+    if (showEditDialog && day != null) {
+        EditTrainingTitleDialog(
+            currentTitle = day!!.trainingTitle,
+            onDismiss = { showEditDialog = false },
+            onConfirm = { newTitle ->
+                viewModelWeekDay.updateTrainingTitle(day!!.weekDayId, newTitle)
+                showEditDialog = false
             }
         )
     }
@@ -184,7 +217,9 @@ fun TopAppBarTrainingDay(
     selectedDayId: Long,
     navController: NavController,
     day: WeekDay,
-    onAddExerciseClick: () -> Unit // Add this parameter for the add exercise action
+    onAddExerciseClick: () -> Unit,
+    onEditTitleClick: () -> Unit
+
 ){
     TopAppBar(
         title = {
@@ -193,9 +228,13 @@ fun TopAppBarTrainingDay(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text("${day!!.dayName} - ${day!!.trainingTitle}")
-                Icon(imageVector = Icons.Filled.Create,
-                    contentDescription = "",
-                    modifier = Modifier.size(15.dp))
+                Icon(
+                    imageVector = Icons.Filled.Create,
+                    contentDescription = "Edit Title",
+                    modifier = Modifier
+                        .size(15.dp)
+                        .clickable(onClick = onEditTitleClick) // Call onEditTitleClick here
+                )
             }
         },
         navigationIcon = {
@@ -273,22 +312,33 @@ private fun ExerciseListItem(
     }
 }
 
-// Mock data for preview
-private fun mockDay() = WeekDay(
-    weekDayId = 1L,
-    dayName = "Monday",
-    trainingTitle = "Leg Day"
-)
-
 @Composable
-fun TopAppBarTrainingDayPreview() {
-    val mockNavController = rememberNavController()
-    val mockDay = mockDay()
+fun EditTrainingTitleDialog(
+    currentTitle: String,
+    onDismiss: () -> Unit,
+    onConfirm: (String) -> Unit
+) {
+    var text by remember { mutableStateOf(currentTitle) }
 
-    TopAppBarTrainingDay(
-        selectedDayId = 1L,
-        navController = mockNavController,
-        day = mockDay,
-        onAddExerciseClick = { /* Define action */ }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Edit Training Title") },
+        text = {
+            TextField(
+                value = text,
+                onValueChange = { text = it },
+                label = { Text("Training Title") }
+            )
+        },
+        confirmButton = {
+            Button(onClick = { onConfirm(text) }) {
+                Text("Confirm")
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
     )
 }

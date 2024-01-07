@@ -40,7 +40,9 @@ fun ExerciseItem(
     modifier: Modifier = Modifier,
     exercise: Exercise,
     onClick: () -> Unit = {},
-    onDelete: (Exercise) -> Unit
+    onDelete: (Exercise) -> Unit,
+    onEdit: (Long) -> Unit,
+//    navController: NavController
 ) {
     var dialogIsOpen by rememberSaveable { mutableStateOf(false) }
 
@@ -75,9 +77,7 @@ fun ExerciseItem(
                 .align(Alignment.CenterEnd)
         ) {
             IconButton(
-                onClick = {
-                    onClick
-                },
+                onClick = { onEdit(exercise.exerciseId) },
                 modifier = Modifier.padding(0.dp)
             ) {
                 Icon(

@@ -25,18 +25,20 @@ class WeekDayViewModel(application: Application) : AndroidViewModel(application)
 
     fun loadDayById(weekdayId: Long) {
         viewModelScope.launch {
-            repository.getDayById(weekdayId).observeForever { weekDay ->
+            repository.getDaysById(weekdayId).observeForever { weekDay ->
                 _day.value = weekDay
             }
         }
     }
-
-//    fun loadDayById(weekdayId: Long) {
-//        viewModelScope.launch {
-//            val weekDay = repository.getDayById(weekdayId) // Assuming this method returns WeekDay directly
-//            _day.postValue(weekDay)
-//        }
-//    }
+    fun updateTrainingTitle(weekdayId: Long, newTitle: String) {
+        viewModelScope.launch {
+            val dayToUpdate = repository.getDayById(weekdayId)
+            dayToUpdate?.let {
+                it.trainingTitle = newTitle
+                repository.updateWeekDay(it)
+            }
+        }
+    }
 
     fun insertDay(day: WeekDay) {
         viewModelScope.launch {

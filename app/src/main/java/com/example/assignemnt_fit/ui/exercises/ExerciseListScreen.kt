@@ -23,7 +23,7 @@ import androidx.navigation.NavHostController
 import com.example.assignemnt_fit.R
 import com.example.assignemnt_fit.model.ExercisesViewModel
 import com.example.assignemnt_fit.ui.components.SubpageScaffold
-import com.example.assignemnt_fit.ui.navigation.Screen.NewExercise
+import com.example.assignemnt_fit.ui.navigation.Screen
 
 
 @Composable
@@ -38,7 +38,7 @@ fun ExerciseListScreen(
         title = "Exercises",
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {navController.navigate(NewExercise.route)},
+                onClick = { navController.navigate("newExercise/-1") },
                 modifier = Modifier.padding(16.dp)
             ) {
                 Icon(
@@ -52,19 +52,15 @@ fun ExerciseListScreen(
             modifier = Modifier
                 .padding(innerPadding)
         ) {
-//            val exercises = listOf<Exercise>()
-//            if (exercises.isEmpty()) {
-//                Text(
-//                    text = "No exercises",
-//                    fontSize = 20.sp,
-//                    modifier = Modifier.padding(16.dp)
-//                )
-//            } else {
                 LazyColumn {
                     items(exercises) { exercise ->
                         ExerciseItem(
                             exercise = exercise,
-                            onDelete = { exercisesViewModel.deleteExercise(it) }
+                            onDelete = { exercisesViewModel.deleteExercise(it)},
+                            onEdit = { exercise ->
+                                navController.navigate("${Screen.NewExercise.route}/${exercise}")
+                            }
+
                         )
                         Divider(
                             modifier = Modifier
