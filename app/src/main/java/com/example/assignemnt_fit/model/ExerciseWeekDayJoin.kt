@@ -11,6 +11,6 @@ import androidx.room.ForeignKey
     ]
 )
 data class ExerciseWeekDayJoin(
-    val exerciseId: Int,
-    val weekDayId: Int
+    val exerciseId: Long,
+    val weekDayId: Long
 )

@@ -2,7 +2,6 @@ package com.example.assignemnt_fit.ui.day
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -73,69 +72,112 @@ fun DayScreen(
     val day by viewModelWeekDay.day.observeAsState()
     val showCustomBottomSheet = remember { mutableStateOf(false) }
     val exercises by viewModelExercise.allExercises.observeAsState(initial = emptyList())
+//    val exercisesForDay by viewModelWeekDay.exercisesForDay.observeAsState(initial = emptyList())
+    val exercisesForDay by viewModelWeekDay.getExercisesForDay(selectedDayId).observeAsState(initial = emptyList())
 
-    Scaffold {
-        LaunchedEffect(selectedDayId) {
-            viewModelWeekDay.loadDayById(selectedDayId)
-        }
+    LaunchedEffect(selectedDayId) {
+        viewModelWeekDay.loadDayById(selectedDayId)
+        viewModelWeekDay.loadExercisesForDay(selectedDayId)
+    }
 
-        if (day != null) {
-                TopAppBarTrainingDay(selectedDayId = selectedDayId,
+
+    Scaffold(
+        topBar = {
+            if (day != null) {
+                TopAppBarTrainingDay(
+                    selectedDayId = selectedDayId,
                     navController = navController,
                     day = day!!,
-                    onAddExerciseClick = {
-                    showCustomBottomSheet.value = !showCustomBottomSheet.value
-                    }
+                    onAddExerciseClick = { showCustomBottomSheet.value = true }
                 )
-        } else {
-            Text("Loading or No Data Available")
+            }
         }
+    ) { paddingValues ->
+            LazyColumn(modifier = Modifier.padding(top = 60.dp)) {
+                items(exercisesForDay) { exercise ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Image(
+                                painter = painterResource(id = drawable.workout),
+                                contentDescription = null, // Provide a meaningful content description
+                                contentScale = ContentScale.FillHeight,
+                                modifier = Modifier
+                                    .height(60.dp)
+                                    .width(60.dp)
+                                    .clip(shape = RectangleShape)
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+
+                            Column {
+                                Text(text = exercise.name)
+                                Text(text = "${exercise.sets} sets, ${exercise.repetitions} reps")
+                            }
+                        }
+
+                    }
+                }
+            }
     }
 
     if (showCustomBottomSheet.value) {
         CustomBottomSheet(
             onDismissRequest = { showCustomBottomSheet.value = false },
-            exercises = exercises
+            exercises = exercises,
+            onConfirmSelection = { selectedExercises ->
+                selectedExercises.forEach { exercise ->
+                    viewModelWeekDay.assignExerciseToDay(exercise.exerciseId, selectedDayId)
+                }
+                // Trigger UI update
+                viewModelWeekDay.getExercisesForDay(selectedDayId)
+            }
         )
     }
+
 }
 
 @Composable
 fun CustomBottomSheet(
     onDismissRequest: () -> Unit,
-    exercises: List<Exercise> // Your Exercise data class
+    exercises: List<Exercise>,
+    onConfirmSelection: (List<Exercise>) -> Unit // New parameter
 ) {
-    val selectedExercises = remember { mutableStateMapOf<Exercise, Boolean>() }
+    val selectedExercises = remember { mutableStateMapOf<Long, Boolean>() }
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        title = { Text("Select Exercise") },
+        title = { Text("Select Exercises") },
         text = {
             LazyColumn {
                 items(exercises) { exercise ->
                     ExerciseListItem(
                         exercise = exercise,
-                        isSelected = selectedExercises[exercise] ?: false,
+                        isSelected = selectedExercises[exercise.exerciseId] ?: false,
                         onSelectionChanged = { selected ->
-                            selectedExercises[exercise] = selected
+                            selectedExercises[exercise.exerciseId] = selected
                         }
                     )
-
-                    Divider(
-                        modifier = Modifier
-                            .height(1.dp)
-                            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
-                    )
+                    Divider()
                 }
             }
         },
         confirmButton = {
-            Button(onClick = onDismissRequest) {
+            Button(onClick = {
+                onConfirmSelection(exercises.filter { selectedExercises[it.exerciseId] == true })
+                onDismissRequest()
+            }) {
                 Text("Confirm")
             }
         }
     )
 }
+
 
 @Composable
 fun TopAppBarTrainingDay(
@@ -174,7 +216,7 @@ fun TopAppBarTrainingDay(
                     .size(40.dp)
                     .padding(end = 4.dp)
             ) {
-                IconButton(onClick = onAddExerciseClick) {
+                IconButton(onClick = onAddExerciseClick) { // Use the lambda here
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Add Exercise",

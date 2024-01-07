@@ -12,9 +12,9 @@ interface ExerciseWeekDayJoinDao {
 
     @Transaction
     @Query("SELECT * FROM exercises WHERE exerciseId IN (SELECT exerciseId FROM exercise_weekday_join WHERE weekDayId = :weekDayId)")
-    fun getExercisesForWeekDay(weekDayId: Int): LiveData<List<Exercise>>
+    fun getExercisesForWeekDay(weekDayId: Long): LiveData<List<Exercise>>
 
     @Transaction
     @Query("SELECT * FROM WeekDays WHERE weekDayId IN (SELECT weekDayId FROM exercise_weekday_join WHERE exerciseId = :exerciseId)")
-    fun getWeekDaysForExercise(exerciseId: Int): LiveData<List<WeekDay>>
+    fun getWeekDaysForExercise(exerciseId: Long): LiveData<List<WeekDay>>
 }

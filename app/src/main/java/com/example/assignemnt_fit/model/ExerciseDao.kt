@@ -38,11 +38,4 @@ interface ExerciseDao {
         dropSet: Boolean,
     ): LiveData<List<Exercise>>
 
-//    @Transaction
-//    @Query("SELECT * FROM exercises INNER JOIN ExerciseWeekDayJoin ON exercises.exerciseId = ExerciseWeekDayJoin.exerciseId WHERE ExerciseWeekDayJoin.dayId = :dayId")
-//    fun getExercisesForDay(dayId: Long): LiveData<List<Exercise>>
-
-//    @Insert
-//    suspend fun insertWeekDay(weekDay: WeekDay)
-
 }

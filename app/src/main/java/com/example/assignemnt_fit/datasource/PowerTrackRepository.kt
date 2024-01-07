@@ -60,8 +60,8 @@ class PowerTrackRepository (application: Application){
      * WeekDays
      */
 
-    fun getDayById(dayId: Long): LiveData<WeekDay> {
-        return weekDayDao.getDayById(dayId)
+    fun getDayById(weekdayId: Long): LiveData<WeekDay> {
+        return weekDayDao.getDayById(weekdayId)
     }
     suspend fun insertWeekDays(weekDays: List<WeekDay>){
         weekDayDao.insertAll(weekDays)
@@ -72,16 +72,16 @@ class PowerTrackRepository (application: Application){
     fun insertWeekDay(weekDay: WeekDay) {
     }
 
-    suspend fun assignExerciseToDay(exerciseId: Int, weekDayId: Int) {
-        val join = ExerciseWeekDayJoin(exerciseId, weekDayId)
+    suspend fun assignExerciseToDay(exerciseId: Long, weekdayId: Long) {
+        val join = ExerciseWeekDayJoin(exerciseId, weekdayId)
         exerciseWeekDayJoinDao.insert(join)
     }
 
-    fun getExercisesForWeekDay(weekDayId: Int): LiveData<List<Exercise>> {
-        return exerciseWeekDayJoinDao.getExercisesForWeekDay(weekDayId)
+    fun getExercisesForWeekDay(weekdayId: Long): LiveData<List<Exercise>> {
+        return exerciseWeekDayJoinDao.getExercisesForWeekDay(weekdayId)
     }
 
-    fun getWeekDaysForExercise(exerciseId: Int): LiveData<List<WeekDay>> {
+    fun getWeekDaysForExercise(exerciseId: Long): LiveData<List<WeekDay>> {
         return exerciseWeekDayJoinDao.getWeekDaysForExercise(exerciseId)
     }
 

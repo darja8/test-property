@@ -17,7 +17,7 @@ interface WeekDayDao {
     @Query("SELECT * FROM weekDays")
     fun getAllWeekDays(): LiveData<List<WeekDay>>
 
-    @Query("SELECT * FROM WeekDays WHERE weekDayId = :dayId")
-    fun getDayById(dayId: Long): LiveData<WeekDay>
+    @Query("SELECT * FROM WeekDays WHERE weekDayId = :weekDayId")
+    fun getDayById(weekDayId: Long): LiveData<WeekDay>
 
 }
