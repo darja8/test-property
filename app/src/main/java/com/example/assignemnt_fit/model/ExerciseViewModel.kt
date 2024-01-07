@@ -1,5 +1,4 @@
 package com.example.assignemnt_fit.model
-
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -11,10 +10,7 @@ import kotlinx.coroutines.launch
 class ExercisesViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: PowerTrackRepository = PowerTrackRepository(application)
 
-    val allExercises: LiveData<List<Exercise>> = repository.allExercises
-
-//    var exerciseList: LiveData<List<Exercise>> = repository.getAllExercises()
-//        private set
+    val allExercises: LiveData<List<Exercise>> = repository.fetchAllExercises()
 
     fun insertExercise(newExercise: Exercise) {
         viewModelScope.launch(Dispatchers.IO) {

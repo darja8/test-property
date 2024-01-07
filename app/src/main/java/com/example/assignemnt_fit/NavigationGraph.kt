@@ -32,10 +32,10 @@ fun BuildNavigationGraph(
         composable(
             route = "${Screen.Day.route}/{dayId}",
             arguments = listOf(navArgument("dayId") {
-                type = NavType.IntType
+                type = NavType.LongType
             })
         ) { navBackStackEntry ->
-            DayScreen(navBackStackEntry.arguments!!.getInt("dayId"), navController, weekDayViewModel)
+            DayScreen(navBackStackEntry.arguments!!.getLong("dayId"), navController, weekDayViewModel, exercisesViewModel)
         }
         composable(Screen.NewExercise.route){AddNewExerciseScreen(navController, exercisesViewModel)}
     }

@@ -93,12 +93,6 @@ fun ExerciseItem(
                     imageVector = Icons.Filled.Delete,
                     contentDescription = stringResource(id = R.string.exercise_list)
                 )
-//                AlertDialog(
-//                    dialogIsOpen = dialogIsOpen,
-//                    dialogOpen = { isOpen ->
-//                        dialogIsOpen = isOpen
-//                    },
-//                )
             }
             if (dialogIsOpen){
                 DeleteConfirmationDialog(
@@ -109,6 +103,7 @@ fun ExerciseItem(
                 )
             }
         }
+
     }
 }
 

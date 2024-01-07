@@ -4,42 +4,34 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.assignemnt_fit.datasource.PowerTrackRepository
+import kotlinx.coroutines.launch
 
 class WeekDayViewModel(application: Application) : AndroidViewModel(application) {
+
     private val repository = PowerTrackRepository(application)
+
     val weekDays: LiveData<List<WeekDay>> = repository.allWeekDays
 
     private val _exercises: MutableLiveData<List<Exercise>> = MutableLiveData()
     val exercises: LiveData<List<Exercise>> get() = _exercises
-    suspend fun assignExercisesToDay(dayId: Long, exerciseIds: List<Long>) {
-        val joinRecords = exerciseIds.map { exerciseId ->
-            ExerciseWeekDayJoin(exerciseId, dayId)
-        }
-        ExerciseWeekDayJoinDao.insertAll(joinRecords.toTypedArray())
-    }
-    fun getExercisesForDay(dayId: Long): LiveData<List<Exercise>> {
-        return repository.getExercisesForDay(dayId)
-    }
 
-    fun addExercise(exercise: Exercise) {
+    private val _day = MutableLiveData<WeekDay>()
+    val day: LiveData<WeekDay> = _day
+
+    fun loadDayById(dayId: Long) {
         viewModelScope.launch {
-            dao.insertExercise(exercise)
+            repository.getDayById(dayId).observeForever { weekDay ->
+                _day.value = weekDay
+            }
         }
     }
-
-    fun addWeekDay(weekDay: WeekDay) {
+    fun insertDay(day: WeekDay) {
         viewModelScope.launch {
-            dao.insertWeekDay(weekDay)
+            repository.insertWeekDay(day)
         }
     }
-
-    fun linkExerciseToDay(exerciseId: Long, dayId: Long) {
-        viewModelScope.launch {
-            dao.insertExerciseWeekDayJoin(ExerciseWeekDayJoin(exerciseId, dayId))
-        }
-    }
-
 
 
 }

@@ -1,5 +1,4 @@
 package com.example.assignemnt_fit.model
-
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
@@ -12,16 +11,10 @@ interface ExerciseWeekDayJoinDao {
     suspend fun insert(join: ExerciseWeekDayJoin)
 
     @Transaction
-    @Query("SELECT * FROM exercises WHERE id IN (SELECT exerciseId FROM exerciseWeekdayJoin WHERE weekDayId = :weekDayId)")
+    @Query("SELECT * FROM exercises WHERE exerciseId IN (SELECT exerciseId FROM exercise_weekday_join WHERE weekDayId = :weekDayId)")
     fun getExercisesForWeekDay(weekDayId: Int): LiveData<List<Exercise>>
 
     @Transaction
-    @Query("SELECT * FROM weekDays WHERE id IN (SELECT weekDayId FROM exerciseWeekdayJoin WHERE exerciseId = :exerciseId)")
+    @Query("SELECT * FROM WeekDays WHERE weekDayId IN (SELECT weekDayId FROM exercise_weekday_join WHERE exerciseId = :exerciseId)")
     fun getWeekDaysForExercise(exerciseId: Int): LiveData<List<WeekDay>>
-
-    companion object {
-        fun insertAll(toTypedArray: Array<ExerciseWeekDayJoin>) {
-
-        }
-    }
 }

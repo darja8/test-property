@@ -72,7 +72,7 @@ fun HomeScreen(
         ) {
             items(weekDays) { day -> // Use weekDays here
                 DayScreenContent(day = day) {
-                    navController.navigate("${Screen.Day.route}/${day.id}")
+                    navController.navigate("day/${day.weekDayId}")
                 }
             }
 
