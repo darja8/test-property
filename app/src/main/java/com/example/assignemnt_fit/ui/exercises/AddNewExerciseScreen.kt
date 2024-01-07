@@ -47,6 +47,8 @@ import com.example.assignemnt_fit.R
 import com.example.assignemnt_fit.model.Exercise
 import com.example.assignemnt_fit.model.ExercisesViewModel
 import com.example.assignemnt_fit.ui.components.SubpageScaffold
+import com.example.assignemnt_fit.ui.exercises.DropSetDialog
+import com.example.assignemnt_fit.ui.exercises.DropSetEntry
 import com.example.assignemnt_fit.ui.theme.Assignemnt_fitTheme
 @Composable
 fun AddNewExerciseScreen(
@@ -54,6 +56,9 @@ fun AddNewExerciseScreen(
     exerciseId: Long? = null,
     exercisesViewModel: ExercisesViewModel = viewModel()
 ) {
+    var showDropSetDialog by remember { mutableStateOf(false) }
+    var dropSets by remember { mutableStateOf(listOf<DropSetEntry>()) }
+
     val exerciseToEdit by exercisesViewModel.getExerciseById(exerciseId ?: -1).observeAsState()
     val modifier = Modifier
     var exerciseTitle by remember { mutableStateOf(exerciseToEdit?.name ?: "") }
@@ -169,8 +174,22 @@ fun AddNewExerciseScreen(
                         modifier = Modifier.size(20.dp))
                     Checkbox(
                         checked = isDropset,
-                        onCheckedChange = { isChecked -> isDropset = isChecked }
+                        onCheckedChange = {
+                            isDropset = it
+                            showDropSetDialog = it && it // Show dialog when checkbox is checked
+                        }
                     )
+
+                    if (showDropSetDialog) {
+                        DropSetDialog(
+                            dropSets = dropSets,
+                            onDismiss = { showDropSetDialog = false },
+                            onConfirm = { updatedDropSets ->
+                                dropSets = updatedDropSets
+                                showDropSetDialog = false
+                            }
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(30.dp))
                 Button(onClick = {
@@ -180,6 +199,7 @@ fun AddNewExerciseScreen(
                     val durationInt = timeInMinutes.toIntOrNull() ?: 0
 
                     if (exerciseToEdit == null) {
+                        // Insert new exercise and get its ID
                         exercisesViewModel.insertExercise(Exercise(
                             name = exerciseTitle,
                             sets = setsInt,
@@ -187,8 +207,14 @@ fun AddNewExerciseScreen(
                             weight = weightInt,
                             duration = durationInt,
                             dropSet = isDropset
-                        ))
+                        )) { newExerciseId ->
+                            // If dropset is enabled, insert the drop sets
+                            if (isDropset) {
+                                exercisesViewModel.insertDropSets(newExerciseId, dropSets)
+                            }
+                        }
                     } else {
+                        // Update existing exercise
                         val updatedExercise = exerciseToEdit!!.copy(
                             name = exerciseTitle,
                             sets = setsInt,
@@ -198,11 +224,17 @@ fun AddNewExerciseScreen(
                             dropSet = isDropset
                         )
                         exercisesViewModel.updateExercise(updatedExercise)
+
+                        // If dropset is enabled, update the drop sets
+                        if (isDropset) {
+                            exercisesViewModel.insertDropSets(exerciseToEdit!!.exerciseId, dropSets)
+                        }
                     }
                     navController.popBackStack()
                 }) {
                     Text(text = if (exerciseToEdit == null) "Save" else "Update")
                 }
+
                 Button(
                     onClick = { },
                     colors = ButtonDefaults.outlinedButtonColors(

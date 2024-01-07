@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 5,
-    "identityHash": "d6644d7dc766ccc4d074ed5be692aefa",
+    "identityHash": "771a5231b85ae66f9e116def601c61fa",
     "entities": [
       {
         "tableName": "exercises",
@@ -97,12 +97,112 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "exercise_weekday_join",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`exerciseId` INTEGER NOT NULL, `weekDayId` INTEGER NOT NULL, PRIMARY KEY(`exerciseId`, `weekDayId`), FOREIGN KEY(`exerciseId`) REFERENCES `exercises`(`exerciseId`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`weekDayId`) REFERENCES `WeekDays`(`weekDayId`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "exerciseId",
+            "columnName": "exerciseId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weekDayId",
+            "columnName": "weekDayId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "exerciseId",
+            "weekDayId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "exercises",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "exerciseId"
+            ],
+            "referencedColumns": [
+              "exerciseId"
+            ]
+          },
+          {
+            "table": "WeekDays",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "weekDayId"
+            ],
+            "referencedColumns": [
+              "weekDayId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "drop_sets",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`dropSetId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `exerciseId` INTEGER NOT NULL, `weight` INTEGER NOT NULL, `repetitions` INTEGER NOT NULL, FOREIGN KEY(`exerciseId`) REFERENCES `exercises`(`exerciseId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "dropSetId",
+            "columnName": "dropSetId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "exerciseId",
+            "columnName": "exerciseId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weight",
+            "columnName": "weight",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "repetitions",
+            "columnName": "repetitions",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "dropSetId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "exercises",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "exerciseId"
+            ],
+            "referencedColumns": [
+              "exerciseId"
+            ]
+          }
+        ]
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd6644d7dc766ccc4d074ed5be692aefa')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '771a5231b85ae66f9e116def601c61fa')"
     ]
   }
 }

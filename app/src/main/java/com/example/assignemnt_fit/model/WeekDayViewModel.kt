@@ -68,4 +68,12 @@ class WeekDayViewModel(application: Application) : AndroidViewModel(application)
             _exercisesForDay.postValue(exercises)
         }
     }
+
+    fun removeExerciseFromDay(exerciseId: Long, weekdayId: Long) {
+        viewModelScope.launch {
+            repository.removeExerciseFromDay(exerciseId, weekdayId)
+            // After removal, reload exercises for the day to update UI
+            loadExercisesForDay(weekdayId)
+        }
+    }
 }

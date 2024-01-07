@@ -69,9 +69,12 @@ fun ExerciseItem(
             Column {
                 Text(text = exercise.name)
                 Text(text = "${exercise.sets} sets, ${exercise.repetitions} reps")
+                if (exercise.dropSet){
+                    Text(text = "drop-set")
+                }
+
             }
         }
-
         Row(
             modifier = Modifier
                 .align(Alignment.CenterEnd)

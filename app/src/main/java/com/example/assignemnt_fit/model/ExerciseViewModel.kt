@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.assignemnt_fit.datasource.PowerTrackRepository
+import com.example.assignemnt_fit.ui.exercises.DropSetEntry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -13,11 +14,20 @@ class ExercisesViewModel(application: Application) : AndroidViewModel(applicatio
 
     val allExercises: LiveData<List<Exercise>> = repository.fetchAllExercises()
 
-    fun insertExercise(newExercise: Exercise) {
+//    fun insertExercise(newExercise: Exercise, onExerciseInserted: (Long) -> Unit) {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            val exerciseId = repository.insert(newExercise)
+//            onExerciseInserted(exerciseId)
+//        }
+//    }
+    fun insertExercise(newExercise: Exercise, onExerciseInserted: (Long) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.insert(newExercise)
+            val exerciseId = repository.insert(newExercise)
+            onExerciseInserted(exerciseId)
         }
     }
+
+
 
     fun deleteExercise(exercise: Exercise) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -40,4 +50,19 @@ class ExercisesViewModel(application: Application) : AndroidViewModel(applicatio
         return result
     }
 
+    fun insertDropSetsForExercise(exerciseId: Long, dropSets: List<DropSetEntry>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.insertDropSets(exerciseId, dropSets)
+        }
+    }
+
+    fun getDropSetsForExercise(exerciseId: Long): LiveData<List<DropSet>> {
+        return repository.getDropSetsForExercise(exerciseId)
+    }
+
+    fun insertDropSets(exerciseId: Long, dropSets: List<DropSetEntry>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.insertDropSets(exerciseId, dropSets)
+        }
+    }
 }

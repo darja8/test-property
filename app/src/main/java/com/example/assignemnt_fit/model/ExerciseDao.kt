@@ -11,8 +11,8 @@ import androidx.room.Update
 @Dao
 interface ExerciseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertExercise(exercise: Exercise)
-
+//    suspend fun insertExercise(exercise: Exercise)
+    suspend fun insertExercise(exercise: Exercise): Long
     @Update
     suspend fun updateExercise(exercise: Exercise)
 

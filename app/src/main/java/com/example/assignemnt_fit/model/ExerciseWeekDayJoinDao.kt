@@ -17,4 +17,7 @@ interface ExerciseWeekDayJoinDao {
     @Transaction
     @Query("SELECT * FROM WeekDays WHERE weekDayId IN (SELECT weekDayId FROM exercise_weekday_join WHERE exerciseId = :exerciseId)")
     fun getWeekDaysForExercise(exerciseId: Long): LiveData<List<WeekDay>>
+
+    @Query("DELETE FROM exercise_weekday_join WHERE exerciseId = :exerciseId AND weekDayId = :weekDayId")
+    suspend fun removeExerciseFromDay(exerciseId: Long, weekDayId: Long)
 }

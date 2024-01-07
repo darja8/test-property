@@ -2,6 +2,8 @@ package com.example.assignemnt_fit.datasource
 
 import android.app.Application
 import androidx.lifecycle.LiveData
+import com.example.assignemnt_fit.model.DropSet
+import com.example.assignemnt_fit.model.DropSetDao
 import com.example.assignemnt_fit.model.Exercise
 import com.example.assignemnt_fit.model.ExerciseDao
 import com.example.assignemnt_fit.model.ExerciseWeekDayJoin
@@ -9,16 +11,20 @@ import com.example.assignemnt_fit.model.ExerciseWeekDayJoinDao
 import com.example.assignemnt_fit.model.WeekDay
 import com.example.assignemnt_fit.model.WeekDayDao
 
+import com.example.assignemnt_fit.ui.exercises.DropSetEntry
+
 class PowerTrackRepository (application: Application){
     private val exerciseDao: ExerciseDao
     private val weekDayDao: WeekDayDao
     private val exerciseWeekDayJoinDao: ExerciseWeekDayJoinDao
+    private val dropSetDao: DropSetDao
 
     init {
         val db = PowerTrackRoomDatabase.getDatabase(application)
         exerciseDao = db.exerciseDao()
         weekDayDao = db.weekdayDao()
         exerciseWeekDayJoinDao = db.exerciseWeekDayJoinDao()
+        dropSetDao = db.dropSetDao()
     }
 
 
@@ -29,8 +35,11 @@ class PowerTrackRepository (application: Application){
     /**
      * Exercises
      */
-    suspend fun insert(exercise: Exercise){
-        exerciseDao.insertExercise(exercise)
+//    suspend fun insert(exercise: Exercise){
+//        exerciseDao.insertExercise(exercise)
+//    }
+    suspend fun insert(exercise: Exercise): Long {
+        return exerciseDao.insertExercise(exercise)
     }
     suspend fun clearTable() {
         exerciseDao.clearTable()
@@ -96,6 +105,26 @@ class PowerTrackRepository (application: Application){
 
     suspend fun getExerciseById(id: Long): Exercise? {
         return exerciseDao.getExerciseById(id)
+    }
+
+    suspend fun removeExerciseFromDay(exerciseId: Long, weekdayId: Long) {
+        exerciseWeekDayJoinDao.removeExerciseFromDay(exerciseId, weekdayId)
+    }
+
+
+    fun getDropSetsForExercise(exerciseId: Long): LiveData<List<DropSet>> {
+        return dropSetDao.getDropSetsForExercise(exerciseId)
+    }
+    suspend fun insertDropSets(exerciseId: Long, dropSets: List<DropSetEntry>) {
+        dropSets.forEach { dropSet ->
+            dropSetDao.insertDropSet(
+                DropSet(
+                    exerciseId = exerciseId,
+                    weight = dropSet.weight,
+                    repetitions = dropSet.repetitions
+                )
+            )
+        }
     }
 
 }

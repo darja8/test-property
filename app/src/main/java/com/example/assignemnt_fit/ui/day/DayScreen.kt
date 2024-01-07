@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
@@ -116,35 +117,30 @@ fun DayScreen(
             } else {
                 LazyColumn(modifier = Modifier.padding(top = 60.dp)) {
                     items(exercisesForDay) { exercise ->
-                        Box(
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(16.dp),
-                            contentAlignment = Alignment.CenterStart
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Image(
-                                    painter = painterResource(id = drawable.workout),
-                                    contentDescription = null, // Provide a meaningful content description
-                                    contentScale = ContentScale.FillHeight,
-                                    modifier = Modifier
-                                        .height(60.dp)
-                                        .width(60.dp)
-                                        .clip(shape = RectangleShape)
-                                )
-                                Spacer(modifier = Modifier.width(16.dp))
-
-                                Column {
-                                    Text(text = exercise.name)
-                                    Text(text = "${exercise.sets} sets, ${exercise.repetitions} reps")
-                                }
+                            // Exercise details
+                            Column {
+                                Text(text = exercise.name)
+                                Text(text = "${exercise.sets} sets, ${exercise.repetitions} reps")
                             }
 
+                            // Remove exercise button
+                            IconButton(onClick = {
+                                viewModelWeekDay.removeExerciseFromDay(exercise.exerciseId, selectedDayId)
+                            }) {
+                                Icon(imageVector = Icons.Default.Delete, contentDescription = "Remove exercise")
+                            }
                         }
+                        Divider()
                     }
                 }
+
             }
         }
     }
@@ -276,7 +272,8 @@ fun TopAppBarTrainingDay(
 private fun ExerciseListItem(
     exercise: Exercise,
     isSelected: Boolean,
-    onSelectionChanged: (Boolean) -> Unit)
+    onSelectionChanged: (Boolean) -> Unit
+)
 {
     Box(
         modifier = Modifier
